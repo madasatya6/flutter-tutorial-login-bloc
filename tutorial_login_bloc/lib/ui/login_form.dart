@@ -64,7 +64,7 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   void _onWidgetDidBuild(Function callback) {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       callback();
     });
   }
