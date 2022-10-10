@@ -45,8 +45,34 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late AuthenticationBloc authenticationBloc;
   UserRepository get userRepository => widget.userRepository;
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthenticationBloc>(
+            create: (context) =>
+                AuthenticationBloc(userRepository: userRepository)),
+        BlocProvider<LoginBloc>(
+            create: (context) =>
+                LoginBloc(userRepository: userRepository, context: context)),
+      ],
+      child: StartApp(userRepository: userRepository),
+    );
+  }
+}
+
+class StartApp extends StatefulWidget {
+  final UserRepository userRepository;
+  const StartApp({Key? key, required this.userRepository}) : super(key: key);
+
+  @override
+  State<StartApp> createState() => _StartAppState();
+}
+
+class _StartAppState extends State<StartApp> {
+  late AuthenticationBloc authenticationBloc;
 
   @override
   void initState() {
@@ -63,39 +89,27 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<AuthenticationBloc>(
-            create: (context) =>
-                AuthenticationBloc(userRepository: userRepository)),
-        BlocProvider<LoginBloc>(
-            create: (context) => LoginBloc(
-                  userRepository: userRepository,
-                  authenticationBloc: authenticationBloc,
-                )),
-      ],
-      child: MaterialApp(
-        home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-          builder: (context, state) {
-            if (state is AuthenticationUninitialized) {
-              return SplashPage(userRepository: userRepository);
-            }
+    return MaterialApp(
+      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
+          if (state is AuthenticationUninitialized) {
+            return SplashPage(userRepository: widget.userRepository);
+          }
 
-            if (state is AuthenticationAuthenticated) {
-              return HomePage();
-            }
+          if (state is AuthenticationAuthenticated) {
+            return HomePage();
+          }
 
-            if (state is AuthenticationUnauthenticated) {
-              return LoginPage(userRepository: userRepository);
-            }
+          if (state is AuthenticationUnauthenticated) {
+            return LoginPage(userRepository: widget.userRepository);
+          }
 
-            if (state is AuthenticationLoading) {
-              return LoadingIndicator();
-            }
-
+          if (state is AuthenticationLoading) {
             return LoadingIndicator();
-          },
-        ),
+          }
+
+          return LoadingIndicator();
+        },
       ),
     );
   }
