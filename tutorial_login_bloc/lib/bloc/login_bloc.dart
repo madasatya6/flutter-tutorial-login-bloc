@@ -31,4 +31,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   @override
   LoginState get inititalState => LoginInitial();
+
+  @override
+  Future<void> close() {
+    return super.close();
+  }
 }

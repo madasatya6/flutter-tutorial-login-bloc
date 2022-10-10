@@ -6,12 +6,7 @@ import 'package:tutorial_login_bloc/events/login_event.dart';
 import 'package:tutorial_login_bloc/states/login_state.dart';
 
 class LoginForm extends StatefulWidget {
-  final LoginBloc loginBloc;
-  final AuthenticationBloc authenticationBloc;
-
-  LoginForm(
-      {Key? key, required this.loginBloc, required this.authenticationBloc})
-      : super(key: key);
+  LoginForm({Key? key}) : super(key: key);
 
   @override
   State<LoginForm> createState() => _LoginFormState();
@@ -20,8 +15,6 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-
-  LoginBloc get _loginBloc => widget.loginBloc;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +42,9 @@ class _LoginFormState extends State<LoginForm> {
                 obscureText: true,
               ),
               MaterialButton(
-                onPressed: () {},
+                onPressed: () {
+                  _onLoginButtonPressed(context);
+                },
                 child: Text('Login'),
               ),
               Container(
@@ -69,10 +64,10 @@ class _LoginFormState extends State<LoginForm> {
     });
   }
 
-  _onLoginButtonPressed() {
-    _loginBloc.add(LoginButtonPressed(
-      username: _usernameController.text,
-      password: _passwordController.text,
-    ));
+  _onLoginButtonPressed(BuildContext context) {
+    context.read<LoginBloc>().add(LoginButtonPressed(
+          username: _usernameController.text,
+          password: _passwordController.text,
+        ));
   }
 }

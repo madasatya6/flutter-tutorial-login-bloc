@@ -50,14 +50,14 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    authenticationBloc = AuthenticationBloc(userRepository: userRepository);
+    authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
     authenticationBloc.add(AppStarted());
     super.initState();
   }
 
   @override
   void dispose() {
-    authenticationBloc.close();
+    // authenticationBloc.close();
     super.dispose();
   }
 
@@ -68,12 +68,17 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<AuthenticationBloc>(
             create: (context) =>
                 AuthenticationBloc(userRepository: userRepository)),
+        BlocProvider<LoginBloc>(
+            create: (context) => LoginBloc(
+                  userRepository: userRepository,
+                  authenticationBloc: authenticationBloc,
+                )),
       ],
       child: MaterialApp(
         home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
           builder: (context, state) {
             if (state is AuthenticationUninitialized) {
-              return SplashPage();
+              return SplashPage(userRepository: userRepository);
             }
 
             if (state is AuthenticationAuthenticated) {

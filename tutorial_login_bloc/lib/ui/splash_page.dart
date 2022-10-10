@@ -3,7 +3,8 @@ import 'package:tutorial_login_bloc/repository/user_repository.dart';
 import 'package:tutorial_login_bloc/ui/login_page.dart';
 
 class SplashPage extends StatefulWidget {
-  const SplashPage({Key? key}) : super(key: key);
+  final UserRepository userRepository;
+  const SplashPage({Key? key, required this.userRepository}) : super(key: key);
 
   @override
   State<SplashPage> createState() => _SplashPageState();
@@ -17,7 +18,7 @@ class _SplashPageState extends State<SplashPage> {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  LoginPage(userRepository: UserRepository())));
+                  LoginPage(userRepository: widget.userRepository)));
     });
     super.initState();
   }
