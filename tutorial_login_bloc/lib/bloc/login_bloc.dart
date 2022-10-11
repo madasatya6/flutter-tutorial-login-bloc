@@ -24,6 +24,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             username: event.username, password: event.password);
 
         context.read<AuthenticationBloc>().add(LoggedIn(token: token));
+
+        emit(LoginSuccess());
       } catch (error) {
         emit(LoginFailure(error: error.toString()));
       }

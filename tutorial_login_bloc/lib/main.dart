@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tutorial_login_bloc/events/authentication_event.dart';
+import 'package:tutorial_login_bloc/middlewares/public_middleware.dart';
+import 'package:tutorial_login_bloc/middlewares/session_middleware.dart';
 import 'package:tutorial_login_bloc/repository/user_repository.dart';
 import 'package:tutorial_login_bloc/bloc/authentication_bloc.dart';
 import 'package:tutorial_login_bloc/bloc/login_bloc.dart';
 import 'package:tutorial_login_bloc/states/authentication_state.dart';
+import 'package:tutorial_login_bloc/ui/about_page.dart';
 import 'package:tutorial_login_bloc/ui/loading_indicator.dart';
 import 'package:tutorial_login_bloc/ui/login_page.dart';
 import 'package:tutorial_login_bloc/ui/splash_page.dart';
@@ -32,7 +35,12 @@ class AppBlocObserver extends BlocObserver {
   }
 }
 
-// reference https://medium.com/flutter-community/flutter-login-tutorial-with-flutter-bloc-ea606ef701ad
+/**
+ * @author madasatya6
+ * 
+ * flutter versi 1: https://medium.com/flutter-community/flutter-login-tutorial-with-flutter-bloc-ea606ef701ad
+ * flutter versi 2: in this tutorial
+ */
 class MyApp extends StatefulWidget {
   final UserRepository userRepository;
   const MyApp({
@@ -83,34 +91,22 @@ class _StartAppState extends State<StartApp> {
 
   @override
   void dispose() {
-    // authenticationBloc.close();
+    authenticationBloc.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
-          if (state is AuthenticationUninitialized) {
-            return SplashPage(userRepository: widget.userRepository);
-          }
-
-          if (state is AuthenticationAuthenticated) {
-            return HomePage();
-          }
-
-          if (state is AuthenticationUnauthenticated) {
-            return LoginPage(userRepository: widget.userRepository);
-          }
-
-          if (state is AuthenticationLoading) {
-            return LoadingIndicator();
-          }
-
-          return LoadingIndicator();
-        },
-      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => PublicMidleware(
+            child: SplashPage(userRepository: widget.userRepository)),
+        '/login': (context) => PublicMidleware(
+            child: LoginPage(userRepository: widget.userRepository)),
+        '/home': (context) => SessionMidleware(child: HomePage()),
+        '/about': (context) => SessionMidleware(child: AboutPage()),
+      },
     );
   }
 }

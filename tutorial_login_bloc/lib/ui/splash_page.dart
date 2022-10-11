@@ -14,11 +14,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     Future.delayed(Duration(seconds: 3)).then((value) {
-      return Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  LoginPage(userRepository: widget.userRepository)));
+      return Navigator.pushReplacementNamed(context, '/login');
     });
     super.initState();
   }
